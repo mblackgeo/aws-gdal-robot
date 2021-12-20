@@ -6,7 +6,7 @@ from datetime import datetime
 import boto3
 
 
-def lambda_handler(event, context):
+def main(event, context):
     print("Received event: " + json.dumps(event, indent=2))
 
     # Get the object from the event and show its content type
@@ -35,3 +35,4 @@ def lambda_handler(event, context):
     )
 
     print(response)
+    return {"statusCode": 200}
