@@ -5,9 +5,9 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # For debugging, installing the AWS CLI
-RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"  && \
-    unzip awscliv2.zip && \
-    ./aws/install
+# RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"  && \
+#     unzip awscliv2.zip && \
+#     ./aws/install
 
 COPY requirements.txt requirements.txt
 RUN python3 -m pip install -r requirements.txt
