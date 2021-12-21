@@ -41,9 +41,9 @@ class BatchStack(Stack):
         bucket.grant_read_write(self.batch_ecs_role)
 
         # compute environment backed by Fargate
-        fargate_spot_environment = batch.ComputeEnvironment(
+        compute_env = batch.ComputeEnvironment(
             self,
-            "MyFargateEnvironment",
+            f"{id}-BatchFargateEnvironment",
             compute_resources=batch.ComputeResources(
                 type=batch.ComputeResourceType.FARGATE, vpc=vpc
             ),
@@ -55,7 +55,7 @@ class BatchStack(Stack):
             f"{id}-BatchQueue",
             compute_environments=[
                 batch.JobQueueComputeEnvironment(
-                    compute_environment=fargate_spot_environment, order=1
+                    compute_environment=compute_env, order=1
                 )
             ],
             priority=1,
