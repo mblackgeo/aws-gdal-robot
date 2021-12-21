@@ -9,8 +9,6 @@ app = cdk.App()
 
 networking = NetworkingStack(app, "NetworkingStack")
 s3_stack = S3TriggerStack(app, "S3TriggerStack")
-batch_stack = BatchStack(
-    app, "BatchStack", s3_stack=s3_stack, networking_stack=networking
-)
+batch_stack = BatchStack(app, "BatchStack", bucket=s3_stack.bucket, vpc=networking.vpc)
 
 app.synth()

@@ -1,7 +1,9 @@
 from aws_cdk import Stack
 from aws_cdk import aws_batch_alpha as batch
+from aws_cdk import aws_ec2 as ec2
 from aws_cdk import aws_ecs as ecs
 from aws_cdk import aws_iam as iam
+from aws_cdk import aws_s3 as s3
 from constructs import Construct
 
 
@@ -10,8 +12,8 @@ class BatchStack(Stack):
         self,
         scope: Construct,
         id: str,
-        s3_stack: Stack,
-        networking_stack: Stack,
+        vpc: ec2.Vpc,
+        bucket: s3.Bucket,
         **kwargs,
     ) -> None:
         super().__init__(scope, id, **kwargs)
@@ -36,14 +38,14 @@ class BatchStack(Stack):
         )
 
         # Allow the compute role to access to S3
-        s3_stack.bucket.grant_read_write(self.batch_ecs_role)
+        bucket.grant_read_write(self.batch_ecs_role)
 
         # compute environment backed by Fargate
         fargate_spot_environment = batch.ComputeEnvironment(
             self,
             "MyFargateEnvironment",
             compute_resources=batch.ComputeResources(
-                type=batch.ComputeResourceType.FARGATE, vpc=networking_stack.vpc
+                type=batch.ComputeResourceType.FARGATE, vpc=vpc
             ),
         )
 
