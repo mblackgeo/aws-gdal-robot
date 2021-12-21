@@ -10,7 +10,7 @@ class S3TriggerStack(Stack):
         super().__init__(scope, id, **kwargs)
 
         # create lambda function
-        function = lambda_.Function(
+        self.function = lambda_.Function(
             self,
             f"{id}-lambda-batch-trigger",
             runtime=lambda_.Runtime.PYTHON_3_8,
@@ -19,10 +19,10 @@ class S3TriggerStack(Stack):
         )
 
         # create s3 bucket
-        bucket = s3.Bucket(self, f"{id}-s3bucket")
+        self.bucket = s3.Bucket(self, f"{id}-s3bucket")
 
         # create s3 notification for lambda function
-        notification = aws_s3_notifications.LambdaDestination(function)
+        notification = aws_s3_notifications.LambdaDestination(self.function)
 
         # assign notification for the s3 event type (ex: OBJECT_CREATED)
-        bucket.add_event_notification(s3.EventType.OBJECT_CREATED, notification)
+        self.bucket.add_event_notification(s3.EventType.OBJECT_CREATED, notification)
