@@ -16,6 +16,7 @@ class S3TriggerStack(Stack):
             runtime=lambda_.Runtime.PYTHON_3_8,
             handler="handler.main",
             code=lambda_.Code.from_asset("./lambda"),
+            # environment={},  # TODO needs to set BATCH_JOB_DEFINITION and BATCH_JOB_QUEUE
         )
 
         # create s3 bucket

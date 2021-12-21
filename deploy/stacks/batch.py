@@ -71,3 +71,13 @@ class BatchStack(Stack):
                 memory_limit_mib=2048,
             ),
         )
+
+    # TODO not sure if this is required yet, but might be needed to pass the
+    # required variables into the S3 trigger stack
+    #   self.output_props['batch_job_queue'] = job_queue
+    #   self.output_props['batch_job_def'] = job_definition
+
+    # # pass objects to another stack
+    # @property
+    # def outputs(self):
+    #   return self.output_props
