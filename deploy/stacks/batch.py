@@ -59,7 +59,7 @@ class BatchStack(Stack):
             compute_resources=batch.ComputeResources(
                 vpc=vpc,
                 type=batch.ComputeResourceType.FARGATE,
-                instance_role=self.batch_instance_role,
+                instance_role=self.batch_instance_role.role_arn,
             ),
         )
 
