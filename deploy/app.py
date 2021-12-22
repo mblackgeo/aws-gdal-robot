@@ -2,13 +2,18 @@
 import aws_cdk as cdk
 
 from stacks.batch import BatchStack
-from stacks.networking import NetworkingStack
 from stacks.s3_trigger import S3TriggerStack
+from stacks.shared import SharedStack
 
 app = cdk.App()
 
-networking = NetworkingStack(app, "NetworkingStack")
-s3_stack = S3TriggerStack(app, "S3TriggerStack")
-batch_stack = BatchStack(app, "BatchStack", bucket=s3_stack.bucket, vpc=networking.vpc)
+# Create the shared resources (VPC and S3 bucket)
+shared = SharedStack(app, "SharedStack")
+
+# Initialise the AWS Batch env and job definition
+batch_stack = BatchStack(app, "BatchStack", bucket=shared.bucket, vpc=shared.vpc)
+
+# Create a Lambda to trigger AWS Batch on creation of object in the bucket
+trigger = S3TriggerStack(app, "S3TriggerStack", bucket=shared.bucket)
 
 app.synth()
