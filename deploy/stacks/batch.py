@@ -4,6 +4,7 @@ from aws_cdk import aws_ec2 as ec2
 from aws_cdk import aws_ecs as ecs
 from aws_cdk import aws_iam as iam
 from aws_cdk import aws_s3 as s3
+from aws_cdk import aws_ssm as ssm
 from constructs import Construct
 
 
@@ -11,60 +12,17 @@ class BatchStack(Stack):
     def __init__(
         self,
         scope: Construct,
-        id: str,
+        construct_id: str,
         vpc: ec2.Vpc,
         bucket: s3.Bucket,
         **kwargs,
     ) -> None:
-        super().__init__(scope, id, **kwargs)
+        super().__init__(scope, construct_id, **kwargs)
 
-        # Create a service role for AWS Batch
-        self.batch_service_role = iam.Role(
+        # Create the job definition for the container that will do the conversion
+        self.batch_job_definition = batch.JobDefinition(
             self,
-            f"{id}-BatchServiceRole",
-            assumed_by=iam.ServicePrincipal("batch.amazonaws.com"),
-            managed_policies=[
-                iam.ManagedPolicy.from_aws_managed_policy_name(
-                    "service-role/AWSBatchServiceRole"
-                )
-            ],
-        )
-
-        # Create a role for Batch in Fargate
-        self.batch_ecs_role = iam.Role(
-            self,
-            f"{id}-BatchFargateRole",
-            assumed_by=iam.ServicePrincipal("ecs.amazonaws.com"),
-        )
-
-        # Allow the compute role to access to S3
-        bucket.grant_read_write(self.batch_ecs_role)
-
-        # compute environment backed by Fargate
-        compute_env = batch.ComputeEnvironment(
-            self,
-            f"{id}-BatchFargateEnvironment",
-            compute_resources=batch.ComputeResources(
-                type=batch.ComputeResourceType.FARGATE, vpc=vpc
-            ),
-        )
-
-        # job queue
-        batch.JobQueue(
-            self,
-            f"{id}-BatchQueue",
-            compute_environments=[
-                batch.JobQueueComputeEnvironment(
-                    compute_environment=compute_env, order=1
-                )
-            ],
-            priority=1,
-        )
-
-        # job definition
-        batch.JobDefinition(
-            self,
-            f"{id}-BatchJob",
+            f"{construct_id}-job-definition",
             container=batch.JobDefinitionContainer(
                 image=ecs.ContainerImage.from_asset("../convert"),
                 vcpus=1,
@@ -72,12 +30,57 @@ class BatchStack(Stack):
             ),
         )
 
-    # TODO not sure if this is required yet, but might be needed to pass the
-    # required variables into the S3 trigger stack
-    #   self.output_props['batch_job_queue'] = job_queue
-    #   self.output_props['batch_job_def'] = job_definition
+        # Create an instance role that AWS batch will use. This needs access
+        # to ECS/EC2 and will also be greated read/write on the S3 bucket
+        self.batch_instance_role = iam.Role(
+            self,
+            f"{construct_id}-batch-job-instance-role",
+            assumed_by=iam.CompositePrincipal(
+                iam.ServicePrincipal("ec2.amazonaws.com"),
+                iam.ServicePrincipal("ecs.amazonaws.com"),
+                iam.ServicePrincipal("ecs-tasks.amazonaws.com"),
+            ),
+            managed_policies=[
+                iam.ManagedPolicy.from_aws_managed_policy_name("service-role/AmazonEC2ContainerServiceforEC2Role"),
+            ],
+        )
+        bucket.grant_read_write(self.batch_instance_role)
 
-    # # pass objects to another stack
-    # @property
-    # def outputs(self):
-    #   return self.output_props
+        # Create a Fargate backed compute environment for AWS Batch
+        self.compute_environment = batch.ComputeEnvironment(
+            self,
+            f"{construct_id}-batch-compute-environment",
+            compute_resources=batch.ComputeResources(
+                vpc=vpc,
+                type=batch.ComputeResourceType.FARGATE,
+            ),
+        )
+
+        # Create the Job Queue for Batch
+        self.job_queue = batch.JobQueue(
+            self,
+            f"{construct_id}-job-queue",
+            priority=1,
+            compute_environments=[
+                batch.JobQueueComputeEnvironment(compute_environment=self.compute_environment, order=1)
+            ],
+        )
+
+        # Use AWS Systems Manager to store the Job Queue and Job Definition names
+        # These are then resolved by the S3 Trigger Stack so the Lambda trigger
+        # knows where to send the job
+        ssm.StringParameter(
+            self,
+            f"{construct_id}-job-queue-ref",
+            parameter_name="batch-job-queue",
+            string_value=self.job_queue.job_queue_name,
+            description="AWS Batch Job Queue Name",
+        )
+
+        ssm.StringParameter(
+            self,
+            f"{construct_id}-job-defn-ref",
+            parameter_name="batch-job-definition",
+            string_value=self.batch_job_definition.job_definition_name,
+            description="AWS Batch Job Definition Name",
+        )
