@@ -7,8 +7,15 @@ from constructs import Construct
 
 
 class S3TriggerStack(Stack):
-    def __init__(self, scope: Construct, construct_id: str, bucket: s3.Bucket, **kwargs) -> None:
+    def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
+
+        # Get the S3 bucket that was created in the Shared Stack
+        bucket = s3.Bucket.from_bucket_arn(
+            scope=self,
+            id=f"{construct_id}-s3-bucket",
+            bucket_arn=ssm.StringParameter.value_for_string_parameter(self, "s3-bucket-arn"),
+        )
 
         # Grab the AWS Batch parameters from session manager
         # These areneeded by the lambda function to send the AWS Batch job

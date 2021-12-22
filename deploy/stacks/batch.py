@@ -14,7 +14,6 @@ class BatchStack(Stack):
         scope: Construct,
         construct_id: str,
         vpc: ec2.Vpc,
-        bucket: s3.Bucket,
         **kwargs,
     ) -> None:
         super().__init__(scope, construct_id, **kwargs)
@@ -43,6 +42,13 @@ class BatchStack(Stack):
             managed_policies=[
                 iam.ManagedPolicy.from_aws_managed_policy_name("service-role/AmazonEC2ContainerServiceforEC2Role"),
             ],
+        )
+
+        # Allow Batch r/w access to the S3 bucket
+        bucket = s3.Bucket.from_bucket_arn(
+            scope=self,
+            id=f"{construct_id}-s3-bucket",
+            bucket_arn=ssm.StringParameter.value_for_string_parameter(self, "s3-bucket-arn"),
         )
         bucket.grant_read_write(self.batch_instance_role)
 
