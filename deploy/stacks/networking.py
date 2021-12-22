@@ -9,7 +9,7 @@ class NetworkingStack(Stack):
 
         self.vpc = ec2.Vpc(
             self,
-            "vpc",
+            f"{construct_id}-vpc",
             cidr="10.0.0.0/16",
             nat_gateways=0,  # TODO check if this is needed
         )
