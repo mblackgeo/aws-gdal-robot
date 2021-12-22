@@ -1,4 +1,5 @@
 from aws_cdk import Stack
+from aws_cdk import aws_iam as iam
 from aws_cdk import aws_lambda as lambda_
 from aws_cdk import aws_s3 as s3
 from aws_cdk import aws_s3_notifications
@@ -34,6 +35,11 @@ class S3TriggerStack(Stack):
                 "BATCH_JOB_DEFINITION": job_defn_name,
                 "BATCH_JOB_QUEUE": job_queue_name,
             },
+        )
+
+        # Allow the Lambda role to trigger AWS Batch
+        self.function.role.add_managed_policy(
+            iam.ManagedPolicy.from_aws_managed_policy_name("service-role/AWSBatchServiceRole")
         )
 
         # Create the notification trigger on the S3 bucket that will
