@@ -19,6 +19,7 @@ class SharedStack(Stack):
 
         # create an s3 bucket with no public access
         # this will trigger lambda job -> AWS Batch when a file is created
+        # TODO - deletion policy
         self.bucket = s3.Bucket(
             self,
             f"{construct_id}-s3-bucket",
