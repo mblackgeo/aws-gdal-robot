@@ -7,17 +7,8 @@ from constructs import Construct
 
 
 class S3TriggerStack(Stack):
-    def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
+    def __init__(self, scope: Construct, construct_id: str, bucket: s3.Bucket, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
-
-        # create an s3 bucket with no public access
-        # this will trigger lambda job -> AWS Batch when a file is created
-        self.bucket = s3.Bucket(
-            self,
-            f"{construct_id}-s3-bucket",
-            public_read_access=False,
-            block_public_access=s3.BlockPublicAccess.BLOCK_ALL,
-        )
 
         # Grab the AWS Batch parameters from session manager
         # These areneeded by the lambda function to send the AWS Batch job
@@ -41,4 +32,4 @@ class S3TriggerStack(Stack):
         # Create the notification trigger on the S3 bucket that will
         # trigger Lambda when an object is created
         notification = aws_s3_notifications.LambdaDestination(self.function)
-        self.bucket.add_event_notification(s3.EventType.OBJECT_CREATED, notification)
+        bucket.add_event_notification(s3.EventType.OBJECT_CREATED, notification)
