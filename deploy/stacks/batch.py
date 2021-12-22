@@ -30,7 +30,7 @@ class BatchStack(Stack):
         )
 
         # Create an instance role that AWS batch will use. This needs access
-        # to ECS/EC2 and will also be greated read/write on the S3 bucket
+        # to ECS/EC2 and will also be granted read/write on the S3 bucket
         self.batch_instance_role = iam.Role(
             self,
             f"{construct_id}-batch-job-instance-role",
@@ -59,6 +59,7 @@ class BatchStack(Stack):
             compute_resources=batch.ComputeResources(
                 vpc=vpc,
                 type=batch.ComputeResourceType.FARGATE,
+                instance_role=self.batch_instance_role,
             ),
         )
 
