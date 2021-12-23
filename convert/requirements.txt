@@ -1,3 +1,4 @@
-boto3==1.20.24
+boto3-stubs[essential]==1.20.26
+boto3==1.20.26
 rasterio==1.2.10
 rio-cogeo==3.0.2
