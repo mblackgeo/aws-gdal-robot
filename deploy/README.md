@@ -31,7 +31,7 @@ cdk synth
 cdk diff
 
 # deploy the stacks
-cdk deploy --all
+cdk deploy --all  # --require-approval never
 
 # To remove
 # Note that CDK cannot yet remove the images stored in ECR so this should
