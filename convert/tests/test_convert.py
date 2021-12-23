@@ -35,7 +35,7 @@ def test_to_cog(test_dir: str, tmp_path: Path, mocker: MockerFixture):
     )
 
     # Mocking the call to S3 so the input/output keys do not matter
-    to_cog("asd", "asd", "asd", "asd")
+    to_cog("", "", "", "")
 
     # ensure we created a valid COG with no errors or warnings
     assert os.path.exists(out_path)
