@@ -33,11 +33,11 @@ def main(event, context):
         containerOverrides={
             "environment": [
                 {
-                    "name": "INPUT_BUCKET",
+                    "name": "INPUT_S3_BUCKET",
                     "value": bucket,
                 },
                 {
-                    "name": "INPUT_KEY",
+                    "name": "INPUT_S3_KEY",
                     "value": key,
                 },
             ]
