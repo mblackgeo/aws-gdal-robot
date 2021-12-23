@@ -29,28 +29,13 @@ class BatchStack(Stack):
             ),
         )
 
-        # Create an instance role that AWS batch will use. This needs access
-        # to ECS/EC2 and will also be granted read/write on the S3 bucket
-        self.batch_instance_role = iam.Role(
-            self,
-            f"{construct_id}-batch-job-instance-role",
-            assumed_by=iam.CompositePrincipal(
-                iam.ServicePrincipal("ec2.amazonaws.com"),
-                iam.ServicePrincipal("ecs.amazonaws.com"),
-                iam.ServicePrincipal("ecs-tasks.amazonaws.com"),
-            ),
-            managed_policies=[
-                iam.ManagedPolicy.from_aws_managed_policy_name("service-role/AmazonEC2ContainerServiceforEC2Role"),
-            ],
-        )
-
-        # Allow Batch r/w access to the S3 bucket
-        bucket = s3.Bucket.from_bucket_arn(
-            scope=self,
-            id=f"{construct_id}-s3-bucket",
-            bucket_arn=ssm.StringParameter.value_for_string_parameter(self, "s3-bucket-arn"),
-        )
-        bucket.grant_read_write(self.batch_instance_role)
+        # TODO allow Batch r/w access to the S3 bucket
+        # bucket = s3.Bucket.from_bucket_arn(
+        #     scope=self,
+        #     id=f"{construct_id}-s3-bucket",
+        #     bucket_arn=ssm.StringParameter.value_for_string_parameter(self, "s3-bucket-arn"),
+        # )
+        # bucket.grant_read_write(self.batch_instance_role)
 
         # Create a Fargate backed compute environment for AWS Batch
         self.compute_environment = batch.ComputeEnvironment(
@@ -59,7 +44,6 @@ class BatchStack(Stack):
             compute_resources=batch.ComputeResources(
                 vpc=vpc,
                 type=batch.ComputeResourceType.FARGATE,
-                instance_role=self.batch_instance_role.role_arn,
             ),
         )
 
