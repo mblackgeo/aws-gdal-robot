@@ -13,6 +13,8 @@ def test_to_cog(test_dir: str, tmp_path: Path, mocker: MockerFixture):
     out_path = str(tmp_path / "cog.tif")
 
     # Mock the read/write of the S3 Helper so it does not actually hit S3
+    mocker.patch("convert.s3.S3Helper._init_bucket", lambda _: None)
+
     def mock_get_bytes(self, key):
         with open(image_path, "rb") as fh:
             buf = BytesIO(fh.read())
