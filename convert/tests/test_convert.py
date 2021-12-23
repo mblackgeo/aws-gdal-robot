@@ -2,7 +2,6 @@ import os
 from io import BytesIO
 from pathlib import Path
 
-import rasterio
 from pytest_mock import MockerFixture
 from rio_cogeo.cogeo import cog_validate
 
