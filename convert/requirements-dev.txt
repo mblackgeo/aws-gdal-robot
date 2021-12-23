@@ -1,7 +1,7 @@
 black
 flake8
-pylint
 mypy
-typed_ast
+pylint
 pytest
 pytest_mock
+typed_ast
