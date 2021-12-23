@@ -5,7 +5,7 @@ from rasterio.io import MemoryFile
 from rio_cogeo.cogeo import cog_translate
 from rio_cogeo.profiles import cog_profiles
 
-from convert.s3_helper import S3Helper
+from convert.s3 import S3Helper
 
 log = logging.getLogger(__name__)
 
