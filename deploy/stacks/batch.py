@@ -38,6 +38,17 @@ class BatchStack(Stack):
         # bucket.grant_read_write(self.batch_instance_role)
 
         # Create a Fargate backed compute environment for AWS Batch
+        # TODO need to ensure this compute environment is setup correctly
+        # Lambda rasies this error when trying to submit a job
+        # [ERROR] ClientException: An error occurred (ClientException) when calling the SubmitJob operation:
+        # Job Queue is attached to Compute Environment that can not run Jobs with capability EC2
+        # Traceback (most recent call last):
+        # File "/var/task/handler.py", line 29, in main
+        #     response = boto3.client("batch").submit_job(
+        # File "/var/runtime/botocore/client.py", line 386, in _api_call
+        #     return self._make_api_call(operation_name, kwargs)
+        # File "/var/runtime/botocore/client.py", line 705, in _make_api_call
+        #     raise error_class(parsed_response, operation_name)
         self.compute_environment = batch.ComputeEnvironment(
             self,
             f"{construct_id}-batch-compute-environment",
