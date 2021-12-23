@@ -1,0 +1,29 @@
+#!/usr/bin/env python3
+import logging
+import os
+import sys
+
+from convert.cog import to_cog
+
+if __name__ == "__main__":
+    # TODO argparser - for now not needed as everything will be set by env vars
+
+    # setup the logger
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s.%(msecs)03d %(levelname)s %(module)s.%(funcName)s:L%(lineno)d - %(message)s",
+        datefmt="%y/%m/%d %H:%M:%S",
+        handlers=[logging.StreamHandler(sys.stdout)],
+    )
+    log = logging.getLogger(__file__)
+
+    # inputs
+    bucket = os.environ.get("INPUT_S3_BUCKET", "sparkgeouk-tmp-eu-west-1")
+    key = os.environ.get("INPUT_S3_KEY", "landsat.tif")
+
+    # outputs
+    out_bucket = os.environ.get("OUTPUT_S3_BUCKET", bucket)
+    out_key = os.environ.get("OUTPUT_S3_KEY", key.replace(".tif", "-cog.tif"))
+
+    # convert to COG
+    to_cog(bucket, key, out_bucket, out_key)

@@ -12,5 +12,6 @@ RUN apt-get update && \
 COPY requirements.txt requirements.txt
 RUN python3 -m pip install -r requirements.txt
 
-COPY ./convert/convert.py convert.py
-CMD ["python3", "convert.py"]
+COPY . /convert
+RUN pip install -e convert/
+CMD ["s3-to-cog"]

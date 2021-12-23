@@ -9,4 +9,5 @@ setup(
     description="A simple GDAL converter that pulls from S3",
     packages=find_packages(),
     install_requires=["boto3", "rasterio", "rio-cogeo"],
+    scripts=["scripts/s3-to-cog"],
 )
