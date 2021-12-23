@@ -3,6 +3,7 @@ from io import BytesIO
 from uuid import uuid4
 
 import boto3
+from mypy_boto3_s3.client import S3Client
 from osgeo import gdal
 
 log = logging.getLogger(__name__)
@@ -11,7 +12,7 @@ log = logging.getLogger(__name__)
 class S3Helper:
     """Helper class for reading and writing to S3 using Boto3"""
 
-    def __init__(self, bucket: str):
+    def __init__(self, bucket_name: str):
         """Initialise an instance of an S3 Bucket
 
         Parameters
@@ -19,8 +20,13 @@ class S3Helper:
         bucket : str
             Name of S3 bucket
         """
-        log.info(f"Initialising S3 bucket with boto3 : {bucket}")
-        self.bucket = boto3.Session().resource("s3").Bucket(bucket)
+        self.bucket_name = bucket_name
+        self.bucket = self._init_bucket()
+
+    def _init_bucket(self) -> S3Client:
+        """Initialise the Boto3 S3 client"""
+        log.info(f"Initialising S3 bucket with boto3 : {self.bucket_name}")
+        return boto3.Session().resource("s3").Bucket(self.bucket_name)
 
     def get_bytes(self, key: str) -> BytesIO:
         """Get a file from S3 using Boto3 returning the binary data
