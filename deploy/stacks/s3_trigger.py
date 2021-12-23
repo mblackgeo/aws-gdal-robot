@@ -37,9 +37,13 @@ class S3TriggerStack(Stack):
             },
         )
 
-        # Allow the Lambda role to trigger AWS Batch
+        # Add permission for Lambda to submit a job to AWS Batch
         self.function.role.add_managed_policy(
-            iam.ManagedPolicy.from_aws_managed_policy_name("service-role/AWSBatchServiceRole")
+            iam.ManagedPolicy.from_managed_policy_arn(
+                scope=self,
+                id=f"{construct_id}-batch-policy-arn",
+                managed_policy_arn="arn:aws:iam::aws:policy/AWSBatchFullAccess",
+            )
         )
 
         # Create the notification trigger on the S3 bucket that will
