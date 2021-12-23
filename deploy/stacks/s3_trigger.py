@@ -30,7 +30,7 @@ class S3TriggerStack(Stack):
             f"{construct_id}-lambda-batch-trigger",
             runtime=lambda_.Runtime.PYTHON_3_8,
             handler="handler.main",
-            code=lambda_.Code.from_asset("./lambda"),
+            code=lambda_.Code.from_asset("../lambda"),
             environment={
                 "BATCH_JOB_DEFINITION": job_defn_name,
                 "BATCH_JOB_QUEUE": job_queue_name,
