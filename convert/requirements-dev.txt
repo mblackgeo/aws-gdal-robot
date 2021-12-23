@@ -3,3 +3,5 @@ flake8
 pylint
 mypy
 typed_ast
+pytest
+pytest_mock
