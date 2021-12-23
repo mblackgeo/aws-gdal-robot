@@ -12,5 +12,5 @@ RUN apt-get update && \
 COPY requirements.txt requirements.txt
 RUN python3 -m pip install -r requirements.txt
 
-COPY convert.py convert.py
+COPY ./convert/convert.py convert.py
 CMD ["python3", "convert.py"]
