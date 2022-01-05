@@ -26,7 +26,9 @@ class BatchStack(Stack):
                 image=ecs.ContainerImage.from_asset("../convert"),
                 vcpus=1,
                 memory_limit_mib=2048,
+                execution_role=fargate_task_execution_role,
             ),
+            platform_capabilities=[batch.PlatformCapabilities.FARGATE],
         )
 
         # TODO allow Batch r/w access to the S3 bucket
