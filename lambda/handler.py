@@ -25,6 +25,7 @@ def main(event, context):
     print(f"Using batch job queue : {job_queue}")
     print(f"Submitting job : {job_name}")
 
+    # TODO check if the file is convertable, only submit if it is
     # submit the s3 bucket and key to the AWS Batch job queue
     response = boto3.client("batch").submit_job(
         jobName=job_name,
@@ -40,6 +41,7 @@ def main(event, context):
                     "name": "INPUT_S3_KEY",
                     "value": key,
                 },
+                # TODO setup OUTPUT S3 KEY/BUCKET to avoid infinite loop
             ]
         },
     )
