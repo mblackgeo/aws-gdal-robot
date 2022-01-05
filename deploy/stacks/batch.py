@@ -18,19 +18,22 @@ class BatchStack(Stack):
     ) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
-        # Create a role that will be used by the fargate job when running
-        # this role requires access to the S3 bucket
-        fargate_task_execution_role = iam.Role(
+        # Role that AWS Batch will assume to execute the job
+        execution_role = iam.Role(
             self,
-            f"{construct_id}-task-exec-role",
+            f"{construct_id}-exec-role",
             assumed_by=iam.ServicePrincipal("ecs-tasks.amazonaws.com"),
             managed_policies=[
                 iam.ManagedPolicy.from_aws_managed_policy_name("service-role/AmazonECSTaskExecutionRolePolicy"),
                 iam.ManagedPolicy.from_aws_managed_policy_name("CloudWatchLogsFullAccess"),
-                iam.ManagedPolicy.from_aws_managed_policy_name("AmazonEC2ContainerRegistryReadOnly"),
-                iam.ManagedPolicy.from_aws_managed_policy_name("AmazonSSMReadOnlyAccess"),
-                iam.ManagedPolicy.from_aws_managed_policy_name("SecretsManagerReadWrite"),
             ],
+        )
+
+        # Role that the container assumes, grants r/w access to the S3 bucket
+        job_role = iam.Role(
+            self,
+            f"{construct_id}-job-role",
+            assumed_by=iam.ServicePrincipal("ecs-tasks.amazonaws.com"),
         )
 
         bucket = s3.Bucket.from_bucket_arn(
@@ -38,7 +41,7 @@ class BatchStack(Stack):
             id=f"{construct_id}-s3-bucket",
             bucket_arn=ssm.StringParameter.value_for_string_parameter(self, "s3-bucket-arn"),
         )
-        bucket.grant_read_write(fargate_task_execution_role)
+        bucket.grant_read_write(job_role)
 
         # Create the job definition for the container that will do the conversion
         self.batch_job_definition = batch.JobDefinition(
@@ -48,7 +51,8 @@ class BatchStack(Stack):
                 image=ecs.ContainerImage.from_asset("../convert"),
                 vcpus=1,
                 memory_limit_mib=2048,
-                execution_role=fargate_task_execution_role,
+                execution_role=execution_role,
+                job_role=job_role,
             ),
             platform_capabilities=[batch.PlatformCapabilities.FARGATE],
         )
