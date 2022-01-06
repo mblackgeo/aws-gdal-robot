@@ -42,21 +42,24 @@ class SharedStack(Stack):
         # ---------------------------------------------------------------------
         # S3
         # ---------------------------------------------------------------------
-        # create an s3 bucket with no public access
-        # this will trigger lambda job -> AWS Batch when a file is created
-        # TODO - deletion policy
-        self.bucket = s3.Bucket(
-            self,
-            f"{construct_id}-s3-bucket",
-            public_read_access=False,
-            block_public_access=s3.BlockPublicAccess.BLOCK_ALL,
-        )
+        # create an input/output s3 buckets with no public access
+        # the input bucket will trigger lambda job to run AWS Batch when a file
+        # is created
+        for btype in ["input", "output"]:
+            # create the buket
+            # TODO - deletion policy
+            bucket = s3.Bucket(
+                self,
+                f"{construct_id}-s3-{btype}-bucket",
+                public_read_access=False,
+                block_public_access=s3.BlockPublicAccess.BLOCK_ALL,
+            )
 
-        # Store the bucket in Session Manager for other stacks to use
-        ssm.StringParameter(
-            self,
-            f"{construct_id}-s3-bucket-ref",
-            parameter_name="s3-bucket-arn",
-            string_value=self.bucket.bucket_arn,
-            description="S3 Bucket ARN",
-        )
+            # Store the bucket in Session Manager for other stacks to use
+            ssm.StringParameter(
+                self,
+                f"{construct_id}-s3-{btype}-bucket-ref",
+                parameter_name=f"s3-{btype}-bucket-arn",
+                string_value=bucket.bucket_arn,
+                description=f"S3 {btype} bucket ARN",
+            )

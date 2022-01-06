@@ -29,19 +29,26 @@ class BatchStack(Stack):
             ],
         )
 
-        # Role that the container assumes, grants r/w access to the S3 bucket
+        # Role that the container assumes
         job_role = iam.Role(
             self,
             f"{construct_id}-job-role",
             assumed_by=iam.ServicePrincipal("ecs-tasks.amazonaws.com"),
         )
 
-        bucket = s3.Bucket.from_bucket_arn(
-            scope=self,
-            id=f"{construct_id}-s3-bucket",
-            bucket_arn=ssm.StringParameter.value_for_string_parameter(self, "s3-bucket-arn"),
-        )
-        bucket.grant_read_write(job_role)
+        # grant r/w access to the buckets
+        for btype in ["input", "output"]:
+            bucket = s3.Bucket.from_bucket_arn(
+                scope=self,
+                id=f"{construct_id}-s3-{btype}-bucket",
+                bucket_arn=ssm.StringParameter.value_for_string_parameter(self, f"s3-{btype}-bucket-arn"),
+            )
+
+            # read-only for input, else r/w
+            if btype == "input":
+                bucket.grant_read(job_role)
+            else:
+                bucket.grant_read_write(job_role)
 
         # Create the job definition for the container that will do the conversion
         self.batch_job_definition = batch.JobDefinition(
