@@ -19,9 +19,16 @@ class S3TriggerStack(Stack):
         )
 
         # Grab the AWS Batch parameters from session manager
-        # These areneeded by the lambda function to send the AWS Batch job
+        # These are needed by the lambda function to send the AWS Batch job
         job_defn_name = ssm.StringParameter.value_for_string_parameter(self, "batch-job-definition")
         job_queue_name = ssm.StringParameter.value_for_string_parameter(self, "batch-job-queue")
+
+        # Get the output S3 bucket
+        out_bucket = s3.Bucket.from_bucket_arn(
+            scope=self,
+            id=f"{construct_id}-s3-outpuyt-bucket",
+            bucket_arn=ssm.StringParameter.value_for_string_parameter(self, f"s3-outpuyt-bucket-arn"),
+        )
 
         # create lambda function that uses the python handler
         # this will trigger the AWS Batch job
@@ -34,6 +41,7 @@ class S3TriggerStack(Stack):
             environment={
                 "BATCH_JOB_DEFINITION": job_defn_name,
                 "BATCH_JOB_QUEUE": job_queue_name,
+                "OUTPUT_S3_BUCKET": out_bucket.bucket_name,
             },
         )
 
