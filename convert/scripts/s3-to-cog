@@ -25,5 +25,8 @@ if __name__ == "__main__":
     out_bucket = os.environ.get("OUTPUT_S3_BUCKET", bucket)
     out_key = os.environ.get("OUTPUT_S3_KEY", key.replace(".tif", "-cog.tif"))
 
+    if bucket == out_bucket:
+        log.warning("Input and output S3 bucket are the same, beware of recursive Lambda invocation")
+
     # convert to COG
     to_cog(bucket, key, out_bucket, out_key)
