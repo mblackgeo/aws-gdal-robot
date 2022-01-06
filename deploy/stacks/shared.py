@@ -48,6 +48,7 @@ class SharedStack(Stack):
         for btype in ["input", "output"]:
             # create the buket
             # TODO - deletion policy
+            # TODO - bucket names
             bucket = s3.Bucket(
                 self,
                 f"{construct_id}-s3-{btype}-bucket",
