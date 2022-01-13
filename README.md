@@ -11,5 +11,7 @@ Structure:
 # TODO
 
 - [x] Separate input/output buckets
+- [ ] Human readable bucket names
+- [ ] Bucket deletion policies
 - [x] Basic filtering so it only triggers on tif files
 - [ ] SNS notifications if batch job fails
