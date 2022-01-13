@@ -7,3 +7,9 @@ Structure:
 * [`deploy`](deploy/) - CDK constructs for configuration of S3, Lambda, and Batch.
 
 ![AWS Diagram](diagram.png)
+
+# TODO
+
+- [x] Separate input/output buckets
+- [x] Basic filtering so it only triggers on tif files
+- [ ] SNS notifications if batch job fails
