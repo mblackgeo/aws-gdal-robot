@@ -43,6 +43,7 @@ class S3TriggerStack(Stack):
                 "BATCH_JOB_QUEUE": job_queue_name,
                 "OUTPUT_S3_BUCKET": out_bucket.bucket_name,
             },
+            description="Trigger to submit a new AWS Batch job to convert a GTiff to COG",
         )
 
         # Add permission for Lambda to submit a job to AWS Batch
