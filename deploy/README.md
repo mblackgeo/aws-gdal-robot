@@ -1,10 +1,6 @@
 ## Overview
 
-This CDK project creates an S3 bucket, which triggers a Lambda function when an item is created, that in turn triggers AWS Batch to convert the upload object to a Cloud Optmised Geotiff.
-
-Open issues:
-* No work is done by the Lambda to check if the file is a GDAL compatible image, any object will trigger the Lambda function
-
+This CDK project creates an S3 bucket, which triggers a Lambda function when an tiff image item is uploaded, that in turn triggers AWS Batch to convert the tiff to a Cloud Optmised Geotiff. Only file extension filtering is done by the S3 trigger (for .tif[f]) rather than a comprehensive check that the object does indeed contain a valid GDAL readable image.
 
 ## Development
 
