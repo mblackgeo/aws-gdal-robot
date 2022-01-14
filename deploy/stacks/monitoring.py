@@ -39,7 +39,6 @@ class MonitoringStack(Stack):
             f"{construct_id}-batch-failed-event-rule",
             description="",
             event_pattern=pattern,
-            rule_name="AWS Batch S3 to COG failed",
             targets=[events_targets.SnsTopic(topic=topic)],
         )
 
