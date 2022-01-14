@@ -14,4 +14,5 @@ Structure:
 - [ ] Human readable bucket names
 - [ ] Bucket deletion policies
 - [x] Basic filtering so it only triggers on tif files
-- [ ] SNS notifications if batch job fails
+- [x] SNS notifications if batch job fails
+- [ ] Nicer human reable notifications for failures
