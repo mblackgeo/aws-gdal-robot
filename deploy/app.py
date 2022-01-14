@@ -2,6 +2,7 @@
 import aws_cdk as cdk
 
 from stacks.batch import BatchStack
+from stacks.monitoring import MonitoringStack
 from stacks.s3_trigger import S3TriggerStack
 from stacks.shared import SharedStack
 
@@ -18,5 +19,9 @@ batch_stack.add_dependency(shared)
 trigger = S3TriggerStack(app, "s3")
 trigger.add_dependency(batch_stack)
 trigger.add_dependency(shared)
+
+# Add SNS monitoring stack for Batch failures
+monitoring = MonitoringStack(app, "monitor")
+monitoring.add_dependency(batch_stack)
 
 app.synth()
