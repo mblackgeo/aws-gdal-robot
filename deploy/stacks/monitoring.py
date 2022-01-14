@@ -19,9 +19,7 @@ class MonitoringStack(Stack):
         topic = sns.Topic(
             self,
             f"{construct_id}-batch-job-failed",
-            content_based_deduplication=True,
             display_name="S3-to-COG failures topic",
-            fifo=True,
             topic_name="s3-to-cog-failures",
         )
 
