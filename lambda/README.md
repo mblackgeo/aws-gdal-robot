@@ -2,7 +2,7 @@
 
 This Lambda handler will run in AWS Python Lambda runtime when objects with ".tif[f]" file extension are created in the CDK created "input" S3 bucket.
 
-The lambda handler simply triggers an AWS batch job (that runs [`s3-to-cog](../convert/scripts/s3-to-cog)) setting up the correct environment variables, which are:
+The lambda handler simply triggers an AWS batch job (that runs [`s3-to-cog`](../convert/scripts/s3-to-cog)) setting up the correct environment variables, which are:
 
 * `INPUT_S3_BUCKET`: Pulled out of the S3 trigger event
 * `INPUT_S3_KEY`: Pulled out of the S3 trigger event
