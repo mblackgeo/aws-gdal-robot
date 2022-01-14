@@ -32,7 +32,7 @@ class MonitoringStack(Stack):
         job_defn_name = ssm.StringParameter.value_for_string_parameter(self, "batch-job-definition")
         pattern = events.EventPattern(
             source=["aws.batch"],
-            detail={"status": ["FAILED"], "jobDefinition": [f"{job_defn_name}*"]},
+            detail={"status": ["FAILED"], "jobDefinition": [job_defn_name]},
             detail_type=["Batch Job State Change"],
         )
 
