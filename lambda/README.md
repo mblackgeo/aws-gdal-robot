@@ -1,4 +1,4 @@
-# `lamda.handler`
+# `lambda.handler`
 
 This Lambda handler will run in AWS Python Lambda runtime when objects with ".tif[f]" file extension are created in the CDK created "input" S3 bucket.
 
