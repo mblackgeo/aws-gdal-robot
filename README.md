@@ -13,6 +13,7 @@ Structure:
 - [x] Separate input/output buckets
 - [ ] Human readable bucket names
 - [ ] Bucket deletion policies
+- [ ] Enable bucket versioning to ensure S3 events are always triggered
 - [x] Basic filtering so it only triggers on tif files
 - [x] SNS notifications if batch job fails
 - [ ] Nicer human reable notifications for failures
