@@ -17,3 +17,4 @@ Structure:
 - [x] Basic filtering so it only triggers on tif files
 - [x] SNS notifications if batch job fails
 - [ ] Nicer human reable notifications for failures
+- [ ] Use CloudTrail/EventBridge to trigger Batch instead of s3 bucket notifications (can probably remove lambda step)
