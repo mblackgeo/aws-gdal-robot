@@ -1,5 +1,5 @@
 # AWS GDAL Robot
-A proof of concept implementation of triggering GDAL based jobs in AWS Batch based on files being upload to S3.
+A proof of concept implementation of triggering GDAL based jobs in AWS Batch based on files being uploaded to S3.
 
 This proof of concept will convert a tiff image uploaded to S3 into a [Cloud Optimised Geotiff](https://www.cogeo.org/). There are many things not covered in this proof of concept (see TODO below), but it is intended to be a rough demo for how to trigger AWS Batch from S3 event notifications via AWS Lambda. An alternative approach, which is perhaps a better option, would be to use EventBridge to trigger Batch, which would remove the need for the Lambda step in between. 
 
